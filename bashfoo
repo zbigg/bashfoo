@@ -1,0 +1,55 @@
+#!/bin/bash
+
+
+show_help()
+{
+    echo "usage: bashfoo --eval-out | --libdir"
+    echo ""
+    echo "* bashfoo --eval-out"
+    echo "    outputs Bash script that shall be evaulated by bash script"
+    echo "    to bootstrap bashfoo env in script"
+    echo "* bashfoo --libdir"
+    echo "    outputs bashfoo library path, one shall source bashfoo.sh from"
+    echo "    this folder to bootstrap bashfoo env"
+}
+
+show_eval()
+{
+    echo "bashfoo_source_path=$bashfoo_source_path"
+    echo "source $bashfoo_source_path/bashfoo.sh"    
+}
+
+bashfoo_bin_prefix=$(dirname $BASH_SOURCE)
+
+if [ -f "$bashfoo_bin_prefix/bashfoo.sh" ] ; then
+    bashfoo_source_path="$bashfoo_bin_prefix/bashfoo.sh"
+elif [ -f "$bashfoo_bin_prefix/../lib/bashfoo/bashfoo.sh" ] ; then
+    bashfoo_source_path="$bashfoo_bin_prefix/../lib/bashfoo/bashfoo.sh"
+else
+    echo "bashfoo: unable to find bashfoo libdir in $bashfoo_bin_prefix and in $bashfoo_bin_prefix/../lib/bashfoo" >&2
+fi
+
+# args parse
+while [ -n "$1" ] ; do
+    maybe_show_auto_help "$1"
+    maybe_invoke_introspection "$@"
+    
+    if [ "$1" = --help -o "$1" = "-h" ] ; then
+        show_help
+        exit
+    elif [ "$1" = --eval-out ] ; then
+        show_eval
+        exit
+    elif [ "$1" = --libdir ] ; then
+        echo "$bashfoo_source_path"
+        exit
+    else
+        (
+            echo "bashfoo: invalid argument $1"
+            show_help
+        ) >&2
+        exit 1
+    fi
+    shift
+done
+
