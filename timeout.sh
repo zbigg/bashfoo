@@ -1,9 +1,10 @@
 #
-# bashcmd_pid timeout
+# bashfoo  timeout
 #
 #
-
-source ./log.sh
+#
+# with_timeout SECONDS COMMAND...
+#
 
 with_timeout()
 {
@@ -34,7 +35,7 @@ with_timeout()
         if [ ! -f "$mark_cmd_finished" ] ; then
             log_error "timeout ${timeout}s reached for '$@', terminating job"
             echo "timeout" >> "$result_file"
-            #kill -TERM $cmd_pid
+            kill -TERM $cmd_pid
             sleep 10
             log_error "command '$@' still alive, KILL-ing it"
             kill -KILL $cmd_pid
@@ -64,7 +65,5 @@ with_timeout()
         return 1
     fi
 }
-
-
 # jedit: :tabSize=8:indentSize=4:noTabs=true:mode=shell:
 
