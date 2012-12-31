@@ -1,0 +1,86 @@
+#
+# bashfoo Makefile 
+#  this makefile uses makefoo
+# 
+# supported targets:
+#   install     -- install to previously configured prefix
+#   src-dist    -- creates bashfoo-VERSION.tar.gz
+#   check       -- run the testsuite
+#
+
+srcdir=@srcdir@
+top_srcdir=@top_srcdir@
+top_builddir=@top_builddir@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+datarootdir = @datarootdir@
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_DIR = mkdir -p
+
+
+#all:
+
+#check:
+#	( cd tests ; ./test.sh)
+
+#
+# bashfoo bin > prefix/bin
+#
+bashfoo_bin_DIR=.
+bashfoo_bin_SCRIPTS = bashfoo
+bashfoo_bin_INSTALL_DEST=$(bindir)
+COMPONENTS += bashfoo_bin
+
+#
+# bashfoo lib > prefix/lib/bashgoo
+#
+bashfoo_lib_DIR=.
+bashfoo_lib_FILES = \
+	bashfoo.sh \
+	log.sh \
+        flag.sh \
+        introspection.sh \
+        auto_usage.sh \
+        memoize.sh \
+        output.sh
+        
+bashfoo_lib_INSTALL_DEST=$(libdir)/bashfoo
+COMPONENTS += bashfoo_lib
+
+#
+# bashfoo documentation > docdir (prefix/share/doc/bashfoo)
+#
+bashfoo_doc_FILES = README.txt
+bashfoo_doc_INSTALL_DEST=$(docdir)/bashfoo
+COMPONENTS += bashfoo_doc
+
+COMPONENTS += bashfoo_aclocal
+PUBLIC_COMPONENTS += $(COMPONENTS)
+
+bashfoo_COMPONENTS = \
+	bashfoo_bin \
+	bashfoo_lib \
+	bashfoo_doc
+
+PACKAGES += bashfoo
+
+PRODUCT=bashfoo
+VERSION=0.0.1-dev
+
+AUTOCONF_AUX_DIR=autoconf_helpers
+
+MAKEFOO=@MAKEFOO@
+MAKEFOO_USE += install-fhs
+MAKEFOO_USE += autoconf
+MAKEFOO_USE += rpm
+MAKEFOO_USE += src-dist
+
+include $(MAKEFOO)
+
+# jedit: :tabSize=8:mode=makefile:
+
