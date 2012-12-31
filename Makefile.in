@@ -47,9 +47,10 @@ bashfoo_lib_FILES = \
         introspection.sh \
         auto_usage.sh \
         memoize.sh \
-        output.sh
+        output.sh \
+        timeout.sh
         
-bashfoo_lib_INSTALL_DEST=$(libdir)/bashfoo
+bashfoo_lib_INSTALL_DEST=$(datarootdir)/bashfoo
 COMPONENTS += bashfoo_lib
 
 #
