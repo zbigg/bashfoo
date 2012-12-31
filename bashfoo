@@ -24,8 +24,8 @@ show_eval()
 {
     ensure_location_variables_initialized
     
-    echo "bashfoo_source_path=$bashfoo_source_path"
-    echo "source $bashfoo_source_path/bashfoo.sh"    
+    echo "bashfoo_libdir=\"$bashfoo_libdir\" ;"
+    echo "source \$bashfoo_libdir/bashfoo.sh"
 }
 
 ensure_location_variables_initialized()
@@ -33,17 +33,20 @@ ensure_location_variables_initialized()
     if [ -n "$bashfoo_bin_prefix" ] ; then
         return
     fi
+    
     bashfoo_bin_prefix=$(dirname $BASH_SOURCE)
     if [ -f "$bashfoo_bin_prefix/bashfoo.sh" ] ; then
         bashfoo_libdir="$bashfoo_bin_prefix"
-        bashfoo_source_path="$bashfoo_bin_prefix/bashfoo.sh"
+    elif [ -f "$bashfoo_bin_prefix/../share/bashfoo/bashfoo.sh" ] ; then
+        bashfoo_libdir="$bashfoo_bin_prefix/../share/bashfoo"
     elif [ -f "$bashfoo_bin_prefix/../lib/bashfoo/bashfoo.sh" ] ; then
         bashfoo_libdir="$bashfoo_bin_prefix/../lib/bashfoo"
-        bashfoo_source_path="$bashfoo_bin_prefix/../lib/bashfoo/bashfoo.sh"
     else
         echo "bashfoo: unable to find bashfoo libdir in $bashfoo_bin_prefix and in $bashfoo_bin_prefix/../lib/bashfoo" >&2
         exit 1
     fi
+    
+    bashfoo_source_path="bashfoo_libdir/bashfoo.sh"
 }
 
 if [ -z "$1" ] ; then
