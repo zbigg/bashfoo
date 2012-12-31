@@ -20,11 +20,7 @@ with_timeout()
     
     # spawn command control subprocess ($cmd_pid)
     (
-        "$@" 
-        r=$?    
-        echo "$r" >> "$result_file"
-        log_debug "job done -> $r"
-        touch "$mark_cmd_finished"
+        exec "$@"
     ) &
     local cmd_pid=$!
     
@@ -46,6 +42,15 @@ with_timeout()
     
     # wait for command subprocess
     wait $cmd_pid 2>/dev/null
+
+    # save the result    
+    local command_result=$?
+    touch "$mark_cmd_finished"
+    
+    log_debug "job done -> $command_result"
+    echo "$command_result" >> "$result_file"
+    
+    
     if [ ! -f "$mark_timeout" ] ; then
         log_debug "killing timeout job"
         kill -TERM $timeout_pid 2>/dev/null
