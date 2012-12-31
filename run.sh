@@ -30,21 +30,6 @@ quiet_if_success()
     return $r
 }
 
-log_run()
-{
-    log '!' "$@"
-        #  TBD: wishlist
-        #   we shall support composing of log_run with other
-        #   "run modifiers"
-        #
-        #   log_run quiet git pull
-        #     shall log "git pull"
-        #     not       "quiet git pull"
-        #   we shall shift all "first elements of $@" which are functions
-        
-    "$@"
-}
-
 # run_in folder COMMAND
 #   execute args as command in specified folder
 #   exit code is propagated

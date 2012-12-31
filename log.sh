@@ -61,3 +61,23 @@ log_info()
     fi
 }
 
+log_run()
+{
+    log '!' "$@"
+        #  TBD: wishlist
+        #   we shall support composing of log_run with other
+        #   "run modifiers"
+        #
+        #   log_run quiet git pull
+        #     shall log "git pull"
+        #     not       "quiet git pull"
+        #   we shall shift all "first elements of $@" which are functions
+        
+    "$@"
+    local r=$?
+    if [ "$r" != 0 ] ; then
+        log_error "-> failed, exit_code=$r"
+    fi
+    
+    return $r
+}
