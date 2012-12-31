@@ -3,7 +3,7 @@
 #
 #
 
-bashfoo_source_path=.
+bashfoo_libdir=.
 source bashfoo.sh
 
 bashfoo_require log
