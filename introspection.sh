@@ -45,6 +45,11 @@ invoke_introspection()
     return $?
 }
 
+list_functions()
+{
+    declare -F | awk '{print $3}'
+}
+
 maybe_invoke_introspection()
 {
     if [ "$1" == "--int-call" ] ; then
