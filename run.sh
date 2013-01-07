@@ -18,8 +18,9 @@ quiet()
 
 quiet_if_success()
 {
-    local tmp_file=`tmpfile_name quiet_if_success`
-    cleanup_file "$tmp_file"
+    #local tmp_file=`tmpfile_name quiet_if_success`
+    #cleanup_file "$tmp_file"
+    local tmp_file=/tmp/.$USER--$$--bashfoo--quiet-if-success
     
     "$@" > $tmp_file 2>&1
     local r=$?
@@ -27,6 +28,7 @@ quiet_if_success()
         log "$@ execution failed (exit_code $r), log output follows"
         cat $tmp_file
     fi
+    rm -rf $tmp_file
     return $r
 }
 
