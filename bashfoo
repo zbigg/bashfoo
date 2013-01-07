@@ -70,6 +70,13 @@ while [ -n "$1" ] ; do
         ensure_location_variables_initialized
         echo "$bashfoo_source_path"
         exit
+    elif [ -f "$1" ] ; then
+        ensure_location_variables_initialized
+        source "$bashfoo_libdir/bashfoo.sh"
+        script="$1"
+        shift
+        source "$script" "$@"
+        exit
     else
         (
             echo "bashfoo: invalid argument -- $1"
