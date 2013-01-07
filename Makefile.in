@@ -16,7 +16,7 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 bindir = @bindir@
 libdir = @libdir@
-datarootdir = @datarootdir@
+datadir = @datadir@
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -50,7 +50,7 @@ bashfoo_lib_FILES = \
         output.sh \
         timeout.sh
         
-bashfoo_lib_INSTALL_DEST=$(datarootdir)/bashfoo
+bashfoo_lib_INSTALL_DEST=$(datadir)/bashfoo
 COMPONENTS += bashfoo_lib
 
 #
