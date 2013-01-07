@@ -25,8 +25,8 @@ INSTALL_DIR = mkdir -p
 
 #all:
 
-#check:
-#	( cd tests ; ./test.sh)
+check:
+	bash $(srcdir)/check.sh
 
 #
 # bashfoo bin > prefix/bin
