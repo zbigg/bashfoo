@@ -62,6 +62,24 @@ queue_read_sleep()
     done
 }
 
+#
+# restore jobs that were not necessarily
+# handled after reading.
+#
+queue_restore()
+{
+    local queue="$1"
+    local target_folder="$2"
+    
+    if [ -d "$target_folder" ] ; then
+        
+        for file in ls -1 "$target_folder" ; do
+            mkdir -p "$queue"
+            mv "$target_folder/$file" "$queue" 
+        done
+    fi
+}
+
 queue_read()
 {
     queue_read_inotify "$@"

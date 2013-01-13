@@ -31,12 +31,8 @@ rule()
 # move all jobs from in_progress_dir to
 # interrupted_dir
 #
-if [ -d "$in_progress_dir" ] ; then
-    for file in ls -1 "$in_progress_dir" ; do
-        mkdir -p "$interrupted_dir"
-        mv "$in_progress_dir/$file" "$interrupted_dir" 
-    fi
-fi
+
+queue_restore "$interrupted_dir" "$in_progress_dir"
 
 mkdir -p "$inbox_dir"
 mkdir -p "$in_progress_dir"
