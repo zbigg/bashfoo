@@ -22,10 +22,11 @@ quiet_if_success()
     #cleanup_file "$tmp_file"
     local tmp_file=/tmp/.$USER--$$--bashfoo--quiet-if-success
     
-    "$@" > $tmp_file 2>&1
+    ( "$@" ) > $tmp_file 2>&1
     local r=$?
+    
     if [ "$r" != 0 ] ; then
-        log "$@ execution failed (exit_code $r), log output follows"
+        log_error "$@ execution failed (exit_code $r), log output follows"
         cat $tmp_file
     fi
     rm -rf $tmp_file
