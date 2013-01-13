@@ -36,6 +36,16 @@ assert_succeeds()
     fi
 }
 
+assert_variable_present()
+{
+    local val=`eval echo \\${$1}`
+    if [ -z "$val" ] ; then
+        log_error "variable setting '$1' is missing $2"
+        exit 1
+    else
+        log_info "variable $1 value: $val"
+    fi
+}
 
 assert_equals()
 {

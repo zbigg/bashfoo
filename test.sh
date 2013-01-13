@@ -25,6 +25,7 @@
 bashfoo_require assert
 bashfoo_require log
 bashfoo_require run
+bashfoo_require path
 bashfoo_require introspection
 
 test_invoke()
@@ -49,49 +50,85 @@ mark_test_result()
         something_failed=1
     fi
 }
-invoke_test_script()
+execute_test_script()
 {
     local test_script_file="$1"
-    local test_name="$1"    
-    echo "TEST $1 ... (script)"
-    (       
+    local test_name="$(basename $1)"
+    echo "TEST ${test_name} ... (script)"
+    (
+        local dir="$(dirname $test_script_file)"
+        export test_src_dir="$(abspath $dir)"
+        export test_name
+        
+        
         quiet_if_success ./$test_script_file
     )
     local r=$?
     mark_test_result "$test_name" "$r"
+    return $r
 }
-invoke_test_function()
+
+execute_test_function()
 {
-    local test_script_function="$1"
-    local test_name="$1"    
-    echo "TEST $1 ... (function)"
-    (       
-        quiet_if_success $test_script_function
+    local test_function="$1"
+    local test_name="$(basename $1)"
+    echo "TEST $test_name ... (function)"
+    (
+        export test_name
+        quiet_if_success $test_function
     )
     local r=$?
     mark_test_result "$test_name" "$r"
+    return $r
 }
 
-bashfoo_invoke_introspection_tests()
+execute_all_test_functions()
 {
-    for test_function in $(list_functions | egrep '^test_') ; do
-        invoke_test_function $test_function
+    for test_function in $(list_functions | egrep '^test_' | egrep -v "^test_invoke") ; do
+        execute_test_function $test_function
     done
 }
+
+execute_tests_from_script()
+{
+    local test_script_file="$1"
+    echo "SUITE ${test_script_file}"
+    (
+        local dir="$(dirname $test_script_file)"
+        export test_src_dir="$(abspath $dir)"
+        source $test_script_file
+        
+        execute_all_test_functions
+        exit $something_failed
+    )
+}
+
+# bashfoo_autotest <test scripts>
+#  executes test scripts (executable) in cotrolled environment
+#   - log test execution if failed
+#   - OOS build supported, test_src_dir shall be used
+#     to access auxilirary files in source tree
+#   - timeout (not yet added)
+#   - aggregate all results in exit code
+#
+#  if param is executable script then it is executted
+#  otherwise, script is sourced and
+#  all functions named test_ are executed as a test
+#
 
 bashfoo_autotest()
 {
     for test_file in $* ; do
         if [ -x "$test_file" ] ; then
-            invoke_test_script "$test_file"
+            execute_test_script "$test_file"
         else
-            bashfoo_testing_suspended=1
-            source "$test_file"    
+            export bashfoo_testing_suspended=1
+            execute_tests_from_script "$test_file"
             bashfoo_testing_suspended=
         fi    
     done
     
-    bashfoo_invoke_introspection_tests
+    
     if [ -n "$something_failed" ] ; then
         log_info "some tests failed"
     else
@@ -105,6 +142,13 @@ autotest()
     if [ -n "$bashfoo_testing_suspended" ] ; then
         return
     else
-        bashfoo_autotest
+        execute_all_test_functions
+        
+        if [ -n "$something_failed" ] ; then
+	    log_info "some tests failed"
+        else
+	    log_info "all tests succeded"
+        fi
+        exit $something_failed
     fi
 }
