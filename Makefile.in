@@ -48,7 +48,8 @@ bashfoo_lib_FILES = \
         auto_usage.sh \
         memoize.sh \
         output.sh \
-        timeout.sh
+        timeout.sh \
+        path.sh
         
 bashfoo_lib_INSTALL_DEST=$(datadir)/bashfoo
 COMPONENTS += bashfoo_lib
