@@ -53,13 +53,12 @@ mark_test_result()
 execute_test_script()
 {
     local test_script_file="$1"
-    local test_name="$(basename $1)"
+    local test_name="${2-$(basename $1)}"
     echo "TEST ${test_name} ... (script)"
     (
         local dir="$(dirname $test_script_file)"
         export test_src_dir="$(abspath $dir)"
         export test_name
-        
         
         quiet_if_success ./$test_script_file
     )
@@ -118,12 +117,18 @@ execute_tests_from_script()
 
 bashfoo_autotest()
 {
-    for test_file in $* ; do
-        if [ -x "$test_file" ] ; then
-            execute_test_script "$test_file"
+    for test in $* ; do
+        if [ -d "$test" ] ; then
+            if [ -x "$test/test_driver.sh" ] ; then
+                execute_test_script "$test/test_driver.sh" "$(basename $test)" 
+            else
+                log_error "folder $test doesn't contain test_driver.sh"
+            fi
+        elif [ -x "$test" ] ; then
+            execute_test_script "$test"
         else
             export bashfoo_testing_suspended=1
-            execute_tests_from_script "$test_file"
+            execute_tests_from_script "$test"
             bashfoo_testing_suspended=
         fi    
     done
