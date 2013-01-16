@@ -73,13 +73,17 @@ queue_restore()
     
     if [ -d "$target_folder" ] ; then
         
-        for file in ls -1 "$target_folder" ; do
+        for file in $(ls -1 "$target_folder") ; do
             mkdir -p "$queue"
             mv "$target_folder/$file" "$queue" 
         done
     fi
 }
 
+exists_in_path()
+{
+    type $1 >/dev/null 2>&1
+}
 queue_read()
 {
     if exists_in_path inotifywait ; then
