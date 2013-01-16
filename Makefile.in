@@ -26,7 +26,7 @@ INSTALL_DIR = mkdir -p
 #all:
 
 check:
-        top_srcdir=$(top_srcdir) bash $(srcdir)/check.sh
+	top_srcdir=$(top_srcdir) bash $(srcdir)/check.sh
 
 #
 # bashfoo bin > prefix/bin
