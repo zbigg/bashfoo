@@ -44,6 +44,7 @@ bashfoo_lib_FILES = \
         bashfoo.sh \
         log.sh \
         flag.sh \
+        run.sh \
         introspection.sh \
         auto_usage.sh \
         memoize.sh \
