@@ -9,7 +9,7 @@
 # note, the original "top-level" source script is sourced
 # BASH_SOURCE is needed for this
 
-bashfoo require log
+bashfoo_require log
 
 auto_usage()
 {

@@ -7,13 +7,13 @@ queue_read_inotify()
 {
     local queue=$1
     local target_folder=$2
-         
+
     (
         cd $queue
-        
+
         # list old files
         ls -1 | awk '{printf(". CLOSE %s\n",$1);}'
-        
+
         # and wait for new events
         exec inotifywait --quiet --monitor --timeout 0 .
     ) | while read root event name ; do
@@ -62,7 +62,33 @@ queue_read_sleep()
     done
 }
 
+#
+# restore jobs that were not necessarily
+# handled after reading.
+#
+queue_restore()
+{
+    local queue="$1"
+    local target_folder="$2"
+    
+    if [ -d "$target_folder" ] ; then
+        
+        for file in $(ls -1 "$target_folder") ; do
+            mkdir -p "$queue"
+            mv "$target_folder/$file" "$queue" 
+        done
+    fi
+}
+
+exists_in_path()
+{
+    type $1 >/dev/null 2>&1
+}
 queue_read()
 {
-    queue_read_inotify "$@"
+    if exists_in_path inotifywait ; then
+        queue_read_inotify "$@"
+    else
+        queue_read_sleep "$@"
+    fi
 }

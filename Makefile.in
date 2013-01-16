@@ -41,16 +41,18 @@ COMPONENTS += bashfoo_bin
 #
 bashfoo_lib_DIR=.
 bashfoo_lib_FILES = \
-	bashfoo.sh \
-	log.sh \
+        bashfoo.sh \
+        log.sh \
         flag.sh \
+        run.sh \
         introspection.sh \
         auto_usage.sh \
         memoize.sh \
         output.sh \
         timeout.sh \
-        path.sh
-        
+        path.sh \
+        queue.sh
+
 bashfoo_lib_INSTALL_DEST=$(datadir)/bashfoo
 COMPONENTS += bashfoo_lib
 
@@ -65,9 +67,9 @@ COMPONENTS += bashfoo_aclocal
 PUBLIC_COMPONENTS += $(COMPONENTS)
 
 bashfoo_COMPONENTS = \
-	bashfoo_bin \
-	bashfoo_lib \
-	bashfoo_doc
+        bashfoo_bin \
+        bashfoo_lib \
+        bashfoo_doc
 
 PACKAGES += bashfoo
 
