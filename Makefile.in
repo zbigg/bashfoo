@@ -43,6 +43,8 @@ bashfoo_lib_DIR=.
 bashfoo_lib_FILES = \
         bashfoo.sh \
         log.sh \
+	assert.sh \
+	test.sh \
         flag.sh \
         run.sh \
         introspection.sh \
