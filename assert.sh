@@ -11,6 +11,7 @@
 #  assert_exists   NAMES...       -- check that all NAMES are existing file names
 #
 
+bashfoo_require run
 
 assert_fails()
 {
@@ -54,6 +55,16 @@ assert_equals()
     
     if [ "$expected" != "$actual" ] ; then
         log_error "expected '$expected', but actual value is '$actual'"
+        exit 1
+    fi
+}
+
+assert_files_equal()
+{
+    local expected="$1"
+    local actual="$2"
+    if ! quiet_if_success -q diff -u "$expected" "$actual" ; then
+        log_error "file '$actual'(+) is different from '$expected'(-), diff above"
         exit 1
     fi
 }

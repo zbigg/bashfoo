@@ -10,6 +10,9 @@
 #     more or less equal to if diff -q A B but useful for command that 
 #     doesn't suppor -q
 #
+
+bashfoo_require temp
+
 quiet()
 {
     "$@" >/dev/null 2>&1
@@ -20,16 +23,23 @@ quiet_if_success()
 {
     #local tmp_file=`tmpfile_name quiet_if_success`
     #cleanup_file "$tmp_file"
-    local tmp_file=/tmp/.$USER--$$--bashfoo--quiet-if-success
+    local quiet_if_success_quiet=0
+    if [ "$1" = "-q" ] ; then
+        quiet_if_success_quiet=1
+        shift
+    fi
     
+    local tmp_file="$(bashfoo.mktemp quiet-invocation)"
     ( "$@" ) > $tmp_file 2>&1
     local r=$?
     
     if [ "$r" != 0 ] ; then
-        log_error "$@ execution failed (exit_code $r), log output follows"
+        if [ -n "$quiet_if_success_quiet" ] ; then
+            log_error "$@ execution failed (exit_code $r), log output follows"
+        fi
         cat $tmp_file
     fi
-    rm -rf $tmp_file
+    #rm -rf $tmp_file
     return $r
 }
 

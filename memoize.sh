@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#bashfoo_require temp
+
 normalize_name_as_file()
 {
     echo "$@" | tr "/{} \"'" "_______"
@@ -9,6 +11,8 @@ memoized()
 {
     #set -x
     local mangled_file_name="$(normalize_name_as_file $@)"
+    
+    #TBD, consider bashfoo.mktempname (which doesn't exist yet)
     local tmp_cached_file_name="/tmp/.memoized_$USER_$$_$mangled_file_name"
     if [ ! -f $tmp_cached_file_name ] ; then
         "$@" > $tmp_cached_file_name

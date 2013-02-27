@@ -28,6 +28,10 @@ INSTALL_DIR = mkdir -p
 check:
 	top_srcdir=$(top_srcdir) bash $(srcdir)/check.sh
 
+EXTRA_DIST = \
+	check.sh \
+	*_test.sh \
+	test_test_script1.sh
 #
 # bashfoo bin > prefix/bin
 #
@@ -53,7 +57,9 @@ bashfoo_lib_FILES = \
         output.sh \
         timeout.sh \
         path.sh \
-        queue.sh
+        queue.sh \
+	temp.sh \
+	text.sh
 
 bashfoo_lib_INSTALL_DEST=$(datadir)/bashfoo
 COMPONENTS += bashfoo_lib
@@ -77,6 +83,8 @@ PACKAGES += bashfoo
 
 PRODUCT=bashfoo
 VERSION=0.0.1-dev
+
+MAKEFOO_DISTCHECK_TARGETS += check
 
 AUTOCONF_AUX_DIR=autoconf_helpers
 
