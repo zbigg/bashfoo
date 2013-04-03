@@ -20,6 +20,43 @@ show_help()
     echo "See http://idf2hotpo.pl/index.php/p/bashfoo."
 }
 
+show_function_help()
+{
+    local fff="$1"
+    awk '
+        function basename(name) {
+             n = split(name, names, "/");
+             return names[n];
+        }
+        function module_name(name)
+        {
+            idx = index(name, ".sh")
+            if( idx ) {
+                return substr(name, 0,idx-1)
+            } else {
+                return name;
+            }
+        }
+        /^'$function'\(/ {
+            in_function=1;
+            printf("synopsis:\n");
+            printf("  bashfoo_require %s\n",module_name(basename(FILENAME)));
+            printf("\n",FN);
+            next;
+        }
+        /^([ \\t])*##/ { 
+            if( in_function ) {
+                hashash_idx=index($0, "##")
+                printf("%s\n", substr($0, hashash_idx+3));
+            }
+            next;
+        }
+        // { 
+            in_function=0
+        }
+    ' $bashfoo_libdir/*.sh
+}
+
 show_eval()
 {
     ensure_location_variables_initialized
@@ -69,6 +106,11 @@ while [ -n "$1" ] ; do
     elif [ "$1" = --bootstrap-script  ] ; then
         ensure_location_variables_initialized
         echo "$bashfoo_source_path"
+        exit
+    elif [ "$1" = help ] ; then
+        ensure_location_variables_initialized
+        function=$2
+        show_function_help
         exit
     elif [ -f "$1" ] ; then
         ensure_location_variables_initialized

@@ -7,7 +7,22 @@
 #
 # if check_flag XXX a ...
 #
+
+
 set_flag()
+    ##   set_flag VARIABLE FLAG
+    ##
+    ##   enable FLAG in VARIABLE
+    ##   logicaly equivalent to VARIABLE ||= FLAG
+    ##
+    ##   example
+    ##      check_flag modules_loaded log --> failure
+    ##      set_flag modules_loaded log
+    ##      check_flag modules_loaded log --> success
+    ##      check_flag modules_loaded foo --> success
+    ##      set_flag modules_loaded foo
+    ##      check_flag modules_loaded log --> success
+    ##      check_flag modules_loaded foo --> success
 {
     local name="$1"
     local value="$2"
@@ -17,6 +32,19 @@ set_flag()
 }
 
 check_flag()
+    ##   check_flag VARIABLE FLAG
+    ##  
+    ##   check if FLAG is set in VARIABLE
+    ##   logicaly equivalent to set_contains($VARIABLE,FLAG)
+    ##
+    ##   example
+    ##      check_flag modules_loaded log --> failure
+    ##      set_flag modules_loaded log
+    ##      check_flag modules_loaded log --> success
+    ##      check_flag modules_loaded foo --> success
+    ##      set_flag modules_loaded foo
+    ##      check_flag modules_loaded log --> success
+    ##      check_flag modules_loaded foo --> success
 {
     local name="$1"
     local tested_value="$2"
