@@ -83,7 +83,7 @@ ensure_location_variables_initialized()
         exit 1
     fi
     
-    bashfoo_source_path="bashfoo_libdir/bashfoo.sh"
+    bashfoo_source_path="$bashfoo_libdir/bashfoo.sh"
 }
 
 if [ -z "$1" ] ; then
