@@ -23,24 +23,24 @@ quiet_if_success()
 {
     #local tmp_file=`tmpfile_name quiet_if_success`
     #cleanup_file "$tmp_file"
+    set -x
     local quiet_if_success_quiet=0
     if [ "$1" = "-q" ] ; then
         quiet_if_success_quiet=1
         shift
     fi
-    
+    set -v
     local tmp_file="$(bashfoo.mktemp quiet-invocation)"
-    ( "$@" ) > $tmp_file 2>&1
-    local r=$?
-    
-    if [ "$r" != 0 ] ; then
-        if [ -n "$quiet_if_success_quiet" ] ; then
+    if "$@"  > $tmp_file 2>&1 ; then
+        return 0
+    else
+        local r="${PIPESTATUS[0]}"
+        if [ "$quiet_if_success_quiet" != 1 ] ; then
             log_error "$@ execution failed (exit_code $r), log output follows"
         fi
         cat $tmp_file
+        return $r
     fi
-    #rm -rf $tmp_file
-    return $r
 }
 
 # run_in folder COMMAND
