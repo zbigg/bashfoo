@@ -11,7 +11,7 @@ bashfoo.tac.tac()
 
 bashfoo.tac.tail_rev()
 {
-    tail -f "$@"
+    tail -r "$@"
 }
 
 #
@@ -24,10 +24,10 @@ case "$OSTYPE" in
             bashfoo.tac.tac "$@" 
         }
         ;;
-     *)
-     bashfoo.tac() { 
-         bashfoo.tac.tac "$@" 
-     }
+     *darwin*|*)
+        bashfoo.tac() { 
+             bashfoo.tac.tail_rev "$@" 
+        }
         ;;
 esac
 
