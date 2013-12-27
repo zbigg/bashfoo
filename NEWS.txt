@@ -1,0 +1,12 @@
+2013-12-27, release 0.0.1
+
+    Initial basfoo release.
+    Stable modules:
+    * log
+    * run
+    * timeout
+    * text
+    * flag
+    * auto_usage
+    * introspection
+    * path
