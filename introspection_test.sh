@@ -1,6 +1,7 @@
 #!/bin/bash
 
 bashfoo_require test
+bashfoo_require assert
 bashfoo_require introspection
 
 test_introspection_list()
@@ -9,4 +10,18 @@ test_introspection_list()
     assert_grep test_introspection_list stdout 
 }
 
+test_variable_functions()
+{
+    assert_fails variable_exists TTvar
+    variable_set TTvar foo
+
+    assert_equals "foo" $TTvar
+    assert_equals foo "$(variable_get TTvar)"
+
+    variable_set TTvar spam-bar
+    assert_equals "spam-bar" $TTvar
+    assert_equals spam-bar "$(variable_get TTvar)"
+}
+
 autotest
+

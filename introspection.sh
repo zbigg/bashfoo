@@ -59,5 +59,31 @@ maybe_invoke_introspection()
     fi
 }
 
+variable_exists()
+    ## variable_exists NAME
+    ##
+    ## checks if variable NAME is set and has non-empty
+    ## value
+    ## (useful for dynamically created variable names)
+{
+    [ -n "$(variable_get "$1")" ]
+}
 
+variable_set()
+    ## variable_set NAME VALUE
+    ##
+    ## sets variable NAME to value VALUE
+    ## (useful for dynamically created variable names)
+{
+    eval "$1='$2'"
+}
+
+variable_get()
+    ## variable_get NAME
+    ##
+    ## outputs VALUE of variable NAME
+    ## (useful for dynamically created variable names)
+{
+    eval echo "\$""$1"
+}
 
