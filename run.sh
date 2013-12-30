@@ -28,12 +28,11 @@ quiet_if_success()
         quiet_if_success_quiet=1
         shift
     fi
-
     local tmp_file="$(bashfoo.mktemp quiet-invocation)"
-    if "$@"  > $tmp_file 2>&1 ; then
+    if ( "$@" ; ) > "$tmp_file" 2>&1 ; then
         return 0
     else
-        local r="${PIPESTATUS[0]}"
+        local r="$?"
         if [ "$quiet_if_success_quiet" != 1 ] ; then
             log_error "$@ execution failed (exit_code $r), log output follows"
         fi
