@@ -69,14 +69,12 @@ assert_files_equal()
     fi
 }
 
-secho() {
-    echo "$PNAME: $*" 1>&2
-}
 show_file()
 {
-    echo "$PNAME: contents of '$1' after last command ($last_command)"
-    egrep -H "^" $1
+    log_info "contents of '$1' after last command ($last_command)"
+    egrep -H "^" $1 >&2
 }
+
 assert_grep() {
     egrep -q "$@" || {
         log_error "expected '$1' in '$2' not found"
