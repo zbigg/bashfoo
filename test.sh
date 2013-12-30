@@ -67,18 +67,22 @@ execute_test_script()
     return $r
 }
 
+execute_test_function_int()
+(
+    export test_name
+    quiet_if_success $test_function
+)
 execute_test_function()
 {
     local test_function="$1"
     local test_name="$(basename $1)"
     echo "TEST $test_name ... (function)"
-    (
-        export test_name
-        quiet_if_success $test_function
-    )
-    local r=$?
-    mark_test_result "$test_name" "$r"
-    return $r
+    if execute_test_function_int ; then
+        mark_test_result "$test_name" "0"
+    else
+        mark_test_result "$test_name" "$?"
+    fi
+    
 }
 
 execute_all_test_functions()
