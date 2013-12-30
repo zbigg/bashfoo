@@ -31,6 +31,22 @@ memoized()
     cat $tmp_cached_file_name
 }
 
+memoized_result()
+{
+    local mangled_file_name="bf_memoized_result_$(normalize_name_as_file $@)"
+    if ! variable_exists "$mangled_file_name" ; then
+        if "$@" ; then
+            local r=0
+        else
+            local r=$?
+        fi
+        variable_set "$mangled_file_name" "$r" 
+    else
+        local r="$(variable_get "$mangled_file_name")"
+    fi
+    return $r
+}
+
 clean_memoize_cache()
 {
     if [ -n "$memoized_files" ] ; then
