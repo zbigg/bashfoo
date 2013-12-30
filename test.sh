@@ -60,7 +60,7 @@ execute_test_script()
         export test_src_dir="$(abspath $dir)"
         export test_name
         
-        quiet_if_success ./$test_script_file
+        quiet_if_success $test_script_file
     )
     local r=$?
     mark_test_result "$test_name" "$r"
