@@ -54,6 +54,7 @@ bashfoo.mktemp.cleanup()
     )
     rm "${bashfoo_mktemp_file_list}"
     [ -n "$BASHFOO_DUMP_TEMPFILES" ] && echo "CLEANUP END"
+    true
 }
 
 trap bashfoo.mktemp.cleanup EXIT 
