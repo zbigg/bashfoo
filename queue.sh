@@ -4,6 +4,9 @@
 # Filesystem queue routines.
 #
 
+bashfoo_require path
+bashfoo_require memoize
+
 #
 # queue_read
 #
@@ -19,7 +22,7 @@ queue_read()
     ##   inotify is used when available (inotifywait interface is used), 
     ##   elsewhere, folder is polled periodically (default $QUEUE_READ_SLEEP_INTERVAL=10)
 {
-    if exists_in_path inotifywait ; then
+    if memoized_result program_exists_in_path inotifywait ; then
         queue_read_inotify "$@"
     else
         queue_read_sleep "$@"
@@ -109,8 +112,4 @@ queue_read_sleep()
     done
 }
 
-exists_in_path()
-{
-    type $1 >/dev/null 2>&1
-}
 

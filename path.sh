@@ -17,4 +17,9 @@ abspath() (
     fi
 )
 
+program_exists_in_path()
+{
+    type $1 >/dev/null 2>&1
+}
+
 # jedit: :tabSize=8:indentSize=4:noTabs=true:mode=shell:
