@@ -4,6 +4,7 @@
 bashfoo_require test
 bashfoo_require text
 
+#@bashfoo.test test_text_prefix
 test_text_prefix()
 {
     ( echo "a" ; echo ; echo "zz" ) | bashfoo.prefix FOO: > stdout
@@ -18,6 +19,7 @@ test_text_prefix()
     assert_grepv '^$' stdout
 }
 
+#@bashfoo.test test_text_tac
 test_text_tac()
 {
     #set -x

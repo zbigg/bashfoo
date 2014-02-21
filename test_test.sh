@@ -2,6 +2,7 @@
 # test
 #
 
+#@bashfoo.test test_test_envitonment
 test_test_envitonment()
 {
     assert_variable_present test_name

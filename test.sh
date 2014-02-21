@@ -48,6 +48,7 @@ mark_test_result()
     if [ "$exit_code" != 0 ]  ; then
         echo "---- $test_name failed! (exit_code=$exit_code)"
         something_failed=1
+        failed_tests="$failed_tests $test_name"
     fi
 }
 execute_test_script()
@@ -82,68 +83,102 @@ execute_test_function()
     else
         mark_test_result "$test_name" "$?"
     fi
-    
 }
 
-execute_all_test_functions()
+bashfoo_run_test_suite()
 {
-    for test_function in $(list_functions | egrep '^test_' | egrep -v "^test_invoke") ; do
-        execute_test_function $test_function
-    done
-}
-
-execute_tests_from_script()
-{
-    local test_script_file="$1"
-    echo "SUITE ${test_script_file}"
-    (
-        local dir="$(dirname $test_script_file)"
-        export test_src_dir="$(abspath $dir)"
-        source $test_script_file
-        
-        execute_all_test_functions
-        exit $something_failed
-    )
-}
-
-# bashfoo_autotest <test scripts>
-#  executes test scripts (executable) in cotrolled environment
-#   - log test execution if failed
-#   - OOS build supported, test_src_dir shall be used
-#     to access auxilirary files in source tree
-#   - timeout (not yet added)
-#   - aggregate all results in exit code
-#
-#  if param is executable script then it is executted
-#  otherwise, script is sourced and
-#  all functions named test_ are executed as a test
-#
-
-bashfoo_autotest()
-{
-    for test in $* ; do
-        if [ -d "$test" ] ; then
-            if [ -x "$test/test_driver.sh" ] ; then
-                execute_test_script "$test/test_driver.sh" "$(basename $test)" 
-            else
-                log_error "folder $test doesn't contain test_driver.sh"
-            fi
-        elif [ -x "$test" ] ; then
-            execute_test_script "$test"
+    while read cmd name dir ; do
+        if   [ "$cmd" = standalone ] ; then
+            execute_test_script "$name"
+        elif [ "$cmd" = function ] ; then
+            test_src_dir="$dir"
+            execute_test_function "$name"
+        elif [ "$cmd" = load ] ; then
+            echo "SUITE ${name}"
+            source "$(abspath $name)"
         else
-            export bashfoo_testing_suspended=1
-            execute_tests_from_script "$test"
-            bashfoo_testing_suspended=
-        fi    
+            log_error "unknown test command '$cmd' (name=$name, dir=$dir)"
+        fi
     done
-    
-    
+}
+
+#
+# bashfoo_autotest
+#
+bashfoo_autotest_add_cmd()
+{
+    if [ -z "$bashfoo_autotest_tmpfile" ] ; then
+        bashfoo_autotest_tmpfile="$(bashfoo.mktemp test_suite)"
+        rm -rf "$bashfoo_autotest_tmpfile"
+    fi
+    log_debug "_bashfoo_add_test: $@"
+    echo "$@" >> "$bashfoo_autotest_tmpfile"
+}
+
+_bashfoo_get_annotated_test_names()
+{
+    local tab=`echo -en '\t'`
+    local bashfoo_test_re="@bashfoo.test[ $tab]+([a-zA-Z_0-9]*)"
+    while read line ; do
+        if [[ $line =~ $bashfoo_test_re ]] ; then
+            echo "${BASH_REMATCH[1]}"
+        fi
+    done
+}
+
+bashfoo_autotest_add_function_tests()
+    # adds all functions tagged @bashfoo.test to test suite
+{
+    for f in "$@" ; do
+        local dir="$(dirname $f)"
+        local loaded=0
+        for match in $(_bashfoo_get_annotated_test_names < $f) ; do
+            fun=$match
+            if [ "$loaded" = 0 ] ; then
+                bashfoo_autotest_add_cmd "load $f $dir"
+                loaded=1
+            fi
+            bashfoo_autotest_add_cmd "function $fun $dir"
+        done
+    done
+}
+
+bashfoo_autotest_add_script_test()
+    # adds all script files to test suite
+{
+    for f in "$@" ; do
+        local dir="$(dirname $f)"
+        if   [ -f "$f" -a -x "$f" ] ; then
+            bashfoo_autotest_add_cmd "standalone $f $dir"
+        elif [ -d "$f" -a -x $f/test_driver.sh ] ; then
+            bashfoo_autotest_add_cmd "standalone $f/test_driver.sh $f"
+        fi
+    done
+}
+
+
+bashfoo_test_run_summary()
+{
     if [ -n "$something_failed" ] ; then
-        log_info "some tests failed"
+        log_info "some tests failed ($failed_tests)"
     else
         log_info "all tests succeded"
     fi
     exit $something_failed
+}
+
+bashfoo_autotest_run()
+{
+    if [ -z "$bashfoo_autotest_tmpfile" ] ; then
+        log_info "bashfoo_test_run: no tests to run!"
+        return 1
+    else
+        export bashfoo_testing_suspended=1
+        bashfoo_run_test_suite < "$bashfoo_autotest_tmpfile"
+        unset bashfoo_testing_suspended
+        
+        bashfoo_test_run_summary
+    fi
 }
 
 autotest()
@@ -151,13 +186,9 @@ autotest()
     if [ -n "$bashfoo_testing_suspended" ] ; then
         return
     else
-        execute_all_test_functions
-        
-        if [ -n "$something_failed" ] ; then
-	    log_info "some tests failed"
-        else
-	    log_info "all tests succeded"
-        fi
-        exit $something_failed
+        bashfoo_autotest_add_function_tests ${BASH_SOURCE[1]}
+        bashfoo_autotest_run
+
+        bashfoo_test_run_summary
     fi
 }

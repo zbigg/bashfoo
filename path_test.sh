@@ -6,6 +6,7 @@
 bashfoo_require test
 bashfoo_require path
 
+#@bashfoo.test test_path_abspath
 test_path_abspath()
 {
     local cwd="$(pwd)"

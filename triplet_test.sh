@@ -19,6 +19,7 @@ bar  update_cmd ./gen.sh
 EOF
 }
 
+#@bashfoo.test test_triplet_get_first
 test_triplet_get_first()
 {
     _test_sample1 > test_sample1.txt
@@ -31,6 +32,7 @@ test_triplet_get_first()
     assert_equals "xxx baz" "`triplet_get_first test_sample1.txt bar update_cmd`"
 }
 
+#@bashfoo.test test_triplet_get_all
 test_triplet_get_all()
 {
     _test_sample1 > test_sample1.txt
