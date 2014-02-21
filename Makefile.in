@@ -59,7 +59,8 @@ bashfoo_lib_FILES = \
         path.sh \
         queue.sh \
 	temp.sh \
-	text.sh
+	text.sh \
+	triplet.sh
 
 bashfoo_lib_INSTALL_DEST=$(datadir)/bashfoo
 COMPONENTS += bashfoo_lib
