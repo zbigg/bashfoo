@@ -44,7 +44,7 @@ mark_test_result()
 {
     local test_name="$1"
     local exit_code="$2"
-    
+
     if [ "$exit_code" != 0 ]  ; then
         echo "---- $test_name failed! (exit_code=$exit_code)"
         something_failed=1
@@ -53,14 +53,19 @@ mark_test_result()
 }
 execute_test_script()
 {
-    local test_script_file="$1"
+    local test_script_file="$test_src_dir/$1"
     local test_name="${2-$(basename $1)}"
+    local test_exec_dir=".bashfoo_test/$test_name"
+
     echo "TEST ${test_name} ... (script)"
+    rm -rf "$test_exec_dir"
+    mkdir -p "$test_exec_dir"
     (
         local dir="$(dirname $test_script_file)"
         export test_src_dir="$(abspath $dir)"
+        cd "$test_exec_dir"
         export test_name
-        
+        export test_src_dir
         quiet_if_success $test_script_file
     )
     local r=$?
@@ -70,14 +75,21 @@ execute_test_script()
 
 execute_test_function_int()
 (
+    cd "$test_exec_dir"
     export test_name
+    export test_src_dir
     quiet_if_success $test_function
 )
 execute_test_function()
 {
     local test_function="$1"
     local test_name="$(basename $1)"
+    local test_exec_dir=".bashfoo_test/$test_name"
     echo "TEST $test_name ... (function)"
+
+    rm -rf "$test_exec_dir"
+    mkdir -p "$test_exec_dir"
+
     if execute_test_function_int ; then
         mark_test_result "$test_name" "0"
     else
@@ -89,9 +101,10 @@ bashfoo_run_test_suite()
 {
     while read cmd name dir ; do
         if   [ "$cmd" = standalone ] ; then
+            test_src_dir="$(abspath $dir)"
             execute_test_script "$name"
         elif [ "$cmd" = function ] ; then
-            test_src_dir="$dir"
+            test_src_dir="$(abspath $dir)"
             execute_test_function "$name"
         elif [ "$cmd" = load ] ; then
             echo "SUITE ${name}"
@@ -130,7 +143,7 @@ bashfoo_autotest_add_function_tests()
     # adds all functions tagged @bashfoo.test to test suite
 {
     for f in "$@" ; do
-        local dir="$(dirname $f)"
+        local dir="$(abspath $(dirname $f))"
         local loaded=0
         for match in $(_bashfoo_get_annotated_test_names < $f) ; do
             fun=$match
@@ -147,9 +160,10 @@ bashfoo_autotest_add_script_test()
     # adds all script files to test suite
 {
     for f in "$@" ; do
-        local dir="$(dirname $f)"
+        local dir="$(abspath $(dirname $f))"
+        local name="$(basename $f)"
         if   [ -f "$f" -a -x "$f" ] ; then
-            bashfoo_autotest_add_cmd "standalone $f $dir"
+            bashfoo_autotest_add_cmd "standalone $name $dir"
         elif [ -d "$f" -a -x $f/test_driver.sh ] ; then
             bashfoo_autotest_add_cmd "standalone $f/test_driver.sh $f"
         fi
