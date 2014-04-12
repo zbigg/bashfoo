@@ -83,7 +83,7 @@ bashfoo_COMPONENTS = \
 PACKAGES += bashfoo
 
 PRODUCT=bashfoo
-VERSION=0.0.1-dev
+VERSION=0.0.2-dev
 
 MAKEFOO_DISTCHECK_TARGETS += check
 

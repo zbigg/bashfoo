@@ -3,6 +3,7 @@ bashfoo - bash helper library
 This is next attempt to create reusabble shell script function helper.
 
 Currently it targets only bash, bash-3.x.
+It works also with bash4, but it's not officially tested.
 
 In future it shall support also generic POSIX shell.
 
