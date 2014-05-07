@@ -44,16 +44,16 @@ bashfoo.mktemp.cleanup()
     if [ ! -f "${bashfoo_mktemp_file_list}" ] ; then
         return
     fi
-    [ -n "$BASHFOO_DUMP_TEMPFILES" ] && echo "CLEANUP of ${bashfoo_mktemp_file_list}"
+    [ -n "${BASHFOO_DUMP_TEMPFILES-}" ] && echo "CLEANUP of ${bashfoo_mktemp_file_list}"
     (
         #IFS="\n"
         for file in $(bashfoo.tac "${bashfoo_mktemp_file_list}") ; do
-            [ -n "$BASHFOO_DUMP_TEMPFILES" ] && { echo "START $file" ; cat $file ; echo "END $file" ; }
+            [ -n "${BASHFOO_DUMP_TEMPFILES-}" ] && { echo "START $file" ; cat $file ; echo "END $file" ; }
             rm "$file"
         done
     )
     rm "${bashfoo_mktemp_file_list}"
-    [ -n "$BASHFOO_DUMP_TEMPFILES" ] && echo "CLEANUP END"
+    [ -n "${BASHFOO_DUMP_TEMPFILES-}" ] && echo "CLEANUP END"
     true
 }
 

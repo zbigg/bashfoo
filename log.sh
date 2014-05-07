@@ -28,12 +28,12 @@ log_process_options()
 
 _log_impl()
 {
-    if [ -z "$SCRIPT_NAME" -a -n "$PNAME" ] ; then
+    if [ -z "${SCRIPT_NAME-}" -a -n "${PNAME-}" ] ; then
         # my legacy scripts all used PNAME
         SCRIPT_NAME=$PNAME
     fi
     
-    if [ -z "$SCRIPT_NAME" ] ; then
+    if [ -z "${SCRIPT_NAME-}" ] ; then
         local idx="${#BASH_SOURCE[*]}"
         local source="${BASH_SOURCE[$idx-1]]}"
         SCRIPT_NAME="`basename $source`"
