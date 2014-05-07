@@ -49,7 +49,7 @@ bashfoo.mktemp.cleanup()
         #IFS="\n"
         for file in $(bashfoo.tac "${bashfoo_mktemp_file_list}") ; do
             [ -n "${BASHFOO_DUMP_TEMPFILES-}" ] && { echo "START $file" ; cat $file ; echo "END $file" ; }
-            rm "$file"
+            rm -rf "$file"
         done
     )
     rm "${bashfoo_mktemp_file_list}"
