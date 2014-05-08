@@ -35,7 +35,7 @@ header "aclocal"
 aclocal -I makefoo-master
 
 header "autoreconf"
-./autoreconf -i
+autoreconf -i -f
 
 header "configure"
 ./configure --with-makefoo-dir=makefoo-master
