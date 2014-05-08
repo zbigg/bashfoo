@@ -34,8 +34,11 @@ fi
 header "aclocal"
 aclocal -I makefoo-master
 
+header "autoreconf"
+./autoreconf -i
+
 header "configure"
-./configure
+./configure --with-makefoo-dir=makefoo-master
 
 source makefoo_configured_defs.mk
 
