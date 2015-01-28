@@ -19,7 +19,7 @@ bashfoo.tac.tail_rev()
 # would ultimately tell which tac version shall be used
 #
 case "$OSTYPE" in
-    *linux*|*msys*)
+    *linux*|*msys*|*cygwin*)
         bashfoo.tac() { 
             bashfoo.tac.tac "$@" 
         }
