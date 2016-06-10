@@ -11,6 +11,8 @@
 #    if log_process_options $1 ; then shift ; continue ; fi
 #
 #
+log_quiet=0
+
 log_process_options()
 {
     if [ "$1" = "--debug" -o "$1" = "-d" ] ; then
