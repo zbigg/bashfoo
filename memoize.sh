@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#bashfoo_require temp
+bashfoo_require temp
 
 normalize_name_as_file()
 {
@@ -19,9 +19,10 @@ memoized()
         local r="$?"
         if [ "$r" = 1 ] ; then
             cat $tmp_cached_file_name
-            rm -rf $tmp_cached_file_name
+            rm -f $tmp_cached_file_name
             return $r
         else
+            bashfoo.mktemp.register "$tmp_cached_file_name"
             memoized_files="$memoized_files $tmp_cached_file_name"
         fi
     #else

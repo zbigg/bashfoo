@@ -1,6 +1,5 @@
 bashfoo_require text
 
-#set -x
 bashfoo.mktemp.prepare()
 {
     if [ -z "$bashfoo_mktemp_template_base" ] ; then
@@ -24,8 +23,12 @@ bashfoo.mktemp.prepare()
         bashfoo_mktemp_file_list="$(mktemp "${bashfoo_mktemp_template_base}-filelist-$$-XXXXXXX")"
     fi
 }
-
 bashfoo.mktemp.prepare
+
+bashfoo.mktemp.register()
+{
+    echo "$1" >> "$bashfoo_mktemp_file_list"
+}
 
 bashfoo.mktemp() {
     # first time, prepare templace variables
@@ -57,5 +60,4 @@ bashfoo.mktemp.cleanup()
     true
 }
 
-trap bashfoo.mktemp.cleanup EXIT 
-
+trap bashfoo.mktemp.cleanup EXIT
