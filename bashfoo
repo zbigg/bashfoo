@@ -44,14 +44,14 @@ show_function_help()
             printf("\n",FN);
             next;
         }
-        /^([ \\t])*##/ { 
+        /^([ \\t])*##/ {
             if( in_function ) {
                 hashash_idx=index($0, "##")
                 printf("%s\n", substr($0, hashash_idx+3));
             }
             next;
         }
-        // { 
+        // {
             in_function=0
         }
     ' $bashfoo_libdir/*.sh
@@ -60,29 +60,32 @@ show_function_help()
 show_eval()
 {
     ensure_location_variables_initialized
-    
+
     echo "bashfoo_libdir=\"$bashfoo_libdir\" ;"
     echo "source \$bashfoo_libdir/bashfoo.sh"
 }
 
 ensure_location_variables_initialized()
 {
-    if [ -n "$bashfoo_bin_prefix" ] ; then
-        return
+    if [ -z "$bashfoo_bin_prefix" ] ; then
+        bashfoo_bin_prefix=$(dirname $BASH_SOURCE)
     fi
-    
-    bashfoo_bin_prefix=$(dirname $BASH_SOURCE)
-    if [ -f "$bashfoo_bin_prefix/bashfoo.sh" ] ; then
-        bashfoo_libdir="$bashfoo_bin_prefix"
-    elif [ -f "$bashfoo_bin_prefix/../share/bashfoo/bashfoo.sh" ] ; then
-        bashfoo_libdir="$bashfoo_bin_prefix/../share/bashfoo"
-    elif [ -f "$bashfoo_bin_prefix/../lib/bashfoo/bashfoo.sh" ] ; then
-        bashfoo_libdir="$bashfoo_bin_prefix/../lib/bashfoo"
-    else
-        echo "bashfoo: unable to find bashfoo libdir in $bashfoo_bin_prefix and in $bashfoo_bin_prefix/../lib/bashfoo" >&2
-        exit 1
+    export bashfoo_bin_prefix
+
+    if [ -z "$bashfoo_libdir" ] ; then
+        if [ -f "$bashfoo_bin_prefix/bashfoo.sh" ] ; then
+            bashfoo_libdir="$bashfoo_bin_prefix"
+        elif [ -f "$bashfoo_bin_prefix/../share/bashfoo/bashfoo.sh" ] ; then
+            bashfoo_libdir="$bashfoo_bin_prefix/../share/bashfoo"
+        elif [ -f "$bashfoo_bin_prefix/../lib/bashfoo/bashfoo.sh" ] ; then
+            bashfoo_libdir="$bashfoo_bin_prefix/../lib/bashfoo"
+        else
+            echo "bashfoo: unable to find bashfoo libdir in $bashfoo_bin_prefix and in $bashfoo_bin_prefix/../lib/bashfoo" >&2
+            exit 1
+        fi
     fi
-    
+    export bashfoo_libdir
+
     bashfoo_source_path="$bashfoo_libdir/bashfoo.sh"
 }
 
