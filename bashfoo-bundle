@@ -1,0 +1,53 @@
+##
+## bashfoo-bundle - bash linker
+##
+##    creates self-contained bash script bundle by linking all required scripts
+##
+## usage
+##    bashfoo-bundle MODULE [MODULE ...]
+##
+## Requirements for modules are specified as `bashfoo-source MODULE` phrases contained
+## somewhere in script (usually at top, as comments).
+##
+## Example:
+##  foo.sh:
+##    foo() {
+##      echo foo
+##    }
+##  script.sh:
+##
+##    # bashfoo-source foo.sh
+##    # bashfoo-source
+##
+##    foo
+##
+## The `bashfoo-bundle script.sh` will create concatenation of `foo.sh` and `script.sh`.
+## The dep tree is traversed in depth-first order.
+##
+
+eval `bashfoo --eval-out`
+
+bashfoo_require log
+bashfoo_require bundle
+bashfoo_require auto_usage
+
+maybe_show_auto_help $1
+
+if [ -z "$1" ] ; then
+    log_error "bad usage: at least one module needed"
+    exit 1
+fi
+
+#
+# this stub ensures that bashfoo bootstrap/require functions are noop in context
+# of bundled script
+#
+# not this gem: { : ; } - it's bash empty function yeah !
+#
+cat << 'EOF'
+bashfoo_require() { : ; }
+bashfoo() { : ; }
+bashfoo-source() { : ; }
+EOF
+
+export_modules_recursive "$@"

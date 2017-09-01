@@ -107,7 +107,7 @@ export_variable()
 
 export_function_recursive_int()
 {
-    local body="$(use_function "$1")"
+    local body="$(export_function "$1")"
 
     while read type imports ; do
         echo "$1 -> $type $import"  >&2
@@ -127,6 +127,52 @@ export_function_recursive_int()
         fi
     done < <(echo "$body" | egrep --only-matching 'bashfoo-import-(var|fun)\s+([a-z_A-Z0-9-]+)')
     echo "$body"
+}
+
+export_module_recursive_int()
+{
+    local body="$(cat "$1")"
+
+    pushd $(dirname $1) >& /dev/null
+    local import
+    while read type import ; do
+        #echo "$1 -> $type $import"  >&2
+        if check_flag _imported $import ; then
+            #echo "$1 -> $$import already included" >&2
+            break
+        fi
+        set_flag _imported $import
+
+        if [ $type == 'bashfoo-source' ] ; then
+            echo "## bashfoo-bundled-start $import"
+            export_module_recursive_int $import
+            echo "## bashfoo-bundled-end $import"
+        else
+            echo "$1 -> unknown import type: $type" >&2
+            return 1
+        fi
+    done < <(echo "$body" | egrep --only-matching 'bashfoo-source\s+([.a-z_A-Z0-9-]+)')
+    popd >& /dev/null
+
+    echo "## bashfoo-module-body $1"
+    echo "$body"
+}
+
+export_module_recursive()
+{
+    _imported=""
+    export_module_recursive_int "$1"
+    _imported=""
+}
+
+export_modules_recursive()
+{
+    _imported=""
+    for module in "$@" ; do
+        export_module_recursive_int "$1"
+    done
+    _imported=""
+
 }
 
 export_function_recursive()

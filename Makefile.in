@@ -1,7 +1,7 @@
 #
-# bashfoo Makefile 
+# bashfoo Makefile
 #  this makefile uses makefoo
-# 
+#
 # supported targets:
 #   install     -- install to previously configured prefix
 #   src-dist    -- creates bashfoo-VERSION.tar.gz
@@ -36,7 +36,7 @@ EXTRA_DIST = \
 # bashfoo bin > prefix/bin
 #
 bashfoo_bin_DIR=.
-bashfoo_bin_SCRIPTS = bashfoo
+bashfoo_bin_SCRIPTS = bashfoo bashfoo-bundle
 bashfoo_bin_INSTALL_DEST=$(bindir)
 COMPONENTS += bashfoo_bin
 
@@ -60,7 +60,8 @@ bashfoo_lib_FILES = \
         queue.sh \
 	temp.sh \
 	text.sh \
-	triplet.sh
+	triplet.sh \
+    bundle.sh
 
 bashfoo_lib_INSTALL_DEST=$(datadir)/bashfoo
 COMPONENTS += bashfoo_lib
