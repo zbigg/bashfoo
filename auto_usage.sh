@@ -14,8 +14,8 @@ bashfoo_require log
 auto_usage()
 {
     local idx="${#BASH_SOURCE[*]}"
-    local source="${BASH_SOURCE[$idx-1]]}"
-    
+    local source="${BASH_SOURCE[$idx-1]}"
+
     # tbd rewrite as one-shot awk
     cat $source | egrep '^##( |$)' | cut -c4- >&2
 }
@@ -29,7 +29,7 @@ fail_on_bad_usage()
     exit 1
 }
 
-# if "$1" is  generic help option 
+# if "$1" is  generic help option
 #   --help
 #   -h
 # then invoke auto_usage and exit
