@@ -13,8 +13,8 @@ bashfoo_require log
 
 auto_usage()
 {
-    local idx="${#BASH_SOURCE[*]}"
-    local source="${BASH_SOURCE[$idx-1]}"
+    local idx=$((${#BASH_SOURCE[*]} -1))
+    local source="${BASH_SOURCE[$(($idx))]}"
 
     # tbd rewrite as one-shot awk
     cat $source | egrep '^##( |$)' | cut -c4- >&2

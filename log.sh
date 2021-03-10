@@ -19,12 +19,12 @@ log_process_options()
         log_debug=1
         return 0
     fi
-    
+
     if [ "$1" = "--quiet" -o "$1" = "-q" ] ; then
         log_quiet=1
         return 0
     fi
-    
+
     return 1
 }
 
@@ -34,13 +34,13 @@ _log_impl()
         # my legacy scripts all used PNAME
         SCRIPT_NAME=$PNAME
     fi
-    
+
     if [ -z "${SCRIPT_NAME-}" ] ; then
-        local idx="${#BASH_SOURCE[*]}"
-        local source="${BASH_SOURCE[$idx-1]]}"
+        local idx=$((${#BASH_SOURCE[*]} -1))
+        local source="${BASH_SOURCE[$idx]}"
         SCRIPT_NAME="`basename $source`"
     fi
-    
+
     echo -e "$SCRIPT_NAME: $*" >&2
 
 }
@@ -74,12 +74,12 @@ log_run()
         #     shall log "git pull"
         #     not       "quiet git pull"
         #   we shall shift all "first elements of $@" which are functions
-        
+
     "$@"
     local r=$?
     if [ "$r" != 0 ] ; then
         log_error "-> failed, exit_code=$r"
     fi
-    
+
     return $r
 }
